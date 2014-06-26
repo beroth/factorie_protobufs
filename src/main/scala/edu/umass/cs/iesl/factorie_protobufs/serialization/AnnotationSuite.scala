@@ -9,8 +9,15 @@ import scala.collection.JavaConverters._
  * @author John Sullivan
  */
 class AnnotationSuite(val annotators:IndexedSeq[AnnotationMethod]) {
+// Annotators and annotations are tied together by the Document.annotators in 
+// factorie.nlp.Document, mapping annotations to DocumentAnnotators.
+//
+// This maps the names of annotators and annotations to the actual classes.
   private implicit val classMap = mutable.HashMap[String, Class[_]]().withDefault{ className => Class.forName(className) }
+// The inverse: class to class name.
   private val nameMap = mutable.HashMap[Class[_], String]().withDefault{ cl => cl.getName }
+// Mapping a annotation name to its AnnotationMethod (wrapper for name, type etc stored in
+// proto buffer field Method)
   private val annotatorMap = annotators.map(a => a.annotation -> a).toMap
 
   private val (tokenAnnotators, generalAnnotators) = annotators.partition(_.isInstanceOf[TokenLevelAnnotation])
